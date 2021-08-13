@@ -22,8 +22,8 @@ try:
 except ImportError:
     pplnn, pplcommon = None, None
 
-from .logger import print_input_output_info
-from .transform import (
+from yolort.runtime.pplnn_utils.logger import print_input_output_info
+from yolort.runtime.pplnn_utils.data import (
     set_input_one_by_one,
     set_random_inputs,
     set_reshaped_inputs_one_by_one,
@@ -31,7 +31,7 @@ from .transform import (
     save_inputs_one_by_one,
     save_outputs_one_by_one,
 )
-from .engine import register_engines
+from yolort.runtime.pplnn_utils.engine import register_engines
 
 
 def get_args_parser():
@@ -117,13 +117,13 @@ def cli_main():
     )
 
     # Creating a Runtime Builder
-    runtime_builder = pplnn.OnnxRuntimeBuilderFactory.CreateFromFile(args.onnx_model, engines)
-    if not runtime_builder:
+    builder = pplnn.OnnxRuntimeBuilderFactory.CreateFromFile(args.onnx_model, engines)
+    if not builder:
         raise RuntimeError("Create OnnxRuntimeBuilder failed.")
 
     # Creating a Runtime Instance
     runtime_options = pplnn.RuntimeOptions()
-    runtime = runtime_builder.CreateRuntime(runtime_options)
+    runtime = builder.CreateRuntime(runtime_options)
     if not runtime:
         raise RuntimeError("Create Runtime instance failed.")
 
